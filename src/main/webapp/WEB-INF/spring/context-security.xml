@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/security"
+             xmlns:beans="http://www.springframework.org/schema/beans"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://www.springframework.org/schema/beans
+             http://www.springframework.org/schema/beans/spring-beans.xsd
+             http://www.springframework.org/schema/security
+             http://www.springframework.org/schema/security/spring-security.xsd">
+	<!-- 사용자가 접속하면 로그인 -->
+	<http auto-config="true" use-expressions="false">
+		<!-- 가로채는것 /*모든것*하위폴더까지 // security 라이브러리 ROLE_USER 예약어 -->
+<!-- 		<intercept-url pattern="/**" access="ROLE_USER" /> -->
+		
+		<!-- 익명사용자로 들어가는 것 -->
+		<intercept-url pattern="/member/login" access="ROLE_ANONYMOUS" />
+		<intercept-url pattern="/admin/**" access="ROLE_ADMIN" />
+		
+		<logout logout-url="/logout" logout-success-url="/"/>
+		
+		<!-- 전부다 예약어(대소문자 구분) -->
+		<form-login
+	    username-parameter="mid"
+	    password-parameter="pwd"
+	    login-page="/member/login"
+	    default-target-url="/member/memberMain"
+	    authentication-failure-url="/member/login?fail=true"
+	  />
+
+	</http>
+		<!-- 그림 3까지 했음 외부에서 들어온 것(이제 이 인터페이스 쓰겠다 선언 인증) -->
+	<authentication-manager>
+	  <authentication-provider>
+	    <user-service>
+				<!-- 이렇게 들어온 사용자는 일반 유저(일반사용자)로 인증해 주겠다 -->
+				<user name="user1234" password="1234" authorities="ROLE_USER"/>
+				<user name="atom1234" password="1234" authorities="ROLE_USER"/>
+				<user name="hkd1234" password="1234" authorities="ROLE_USER"/>
+				<user name="admin" password="admin" authorities="ROLE_ADMIN"/>
+			</user-service>
+		</authentication-provider>
+	</authentication-manager>
+</beans:beans>
+<!-- 생성할때 beans로 // 앞에 beans: 붙여야 오류 발생x // web.xml에 등록하기 -->
